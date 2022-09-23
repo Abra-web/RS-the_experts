@@ -2,34 +2,36 @@ from storage_handler import Storage,join, DIR_DATA_JSON,Type,SONGS_COLUMNS,PLAYL
 import glob,json
 import sys, time
 
-def process_all():
-    storage = Storage()
+def process_all(storage):
     json_files = glob.glob(join(DIR_DATA_JSON, "*.json"))
+    count=0
     for files in json_files:
         f = open(files)
         js = f.read()
         f.close()
         slice = json.loads(js)
-        process_playlist(slice["info"])
         for playlist in slice["playlists"]:
-            process_playlist(playlist)
-def process_playlist(playlist):
+            process_playlist(playlist,storage)
+            count += 1
+            if count % 100 == 0:
+                print(f"Processed {count} playlists!")
+        storage.save_data()
+def process_playlist(playlist,storage):
     playlist_row=list()
     for fields in PLAYLIST_COLUMNS:
-        if fields == "description":
-            try:
-                playlist_row.append(playlist[fields])
-            except:
-                playlist_row.append("")
-        elif fields !="tracks": # Tracks always last
-            playlist_row.append(str(playlist[fields]))
+        playlist_row.append(str(playlist[fields]))
     tracks=playlist["tracks"]
-    process_songs(tracks)
-    tracks_list=list()
+    tracks_list=set()
+    artists_list=set()
+    album_list=set()
     for dicts in tracks:
-        tracks_list.append(dicts['track_uri'])
+        tracks_list.add(dicts['track_uri'])
+        artists_list.add(dicts['album_name'])
+        album_list.add(dicts['artist_name'])
+    playlist_row.append(";".join(artists_list))
+    playlist_row.append(";".join(album_list))
     playlist_row.append(";".join(tracks_list))
-    storage.add_item(Type.PLAYLIST,playlist_row)
+    storage.add_item(playlist_row)
 def process_songs(songs):
     for song in songs:
         song_row=list()
@@ -53,6 +55,7 @@ if __name__ == '__main__':
         if count % 100 == 0:
             print(f"Processed {count} playlists!")
     end = time.time()
+    storage.save_data()
     print("\n--- DONE ---")
     print("Time taken: ", time.strftime('%H:%M:%S', time.gmtime(end - start)))
 
