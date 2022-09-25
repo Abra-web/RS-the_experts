@@ -20,4 +20,18 @@ def sort(df_path,column):
     df2=df.sort_values(by=column)
     df2.to_csv(df_path.replace(".csv",f"_{column}_sort.csv"),index=False)
 
-
+def make_songs_df(path):
+    df=read_csv(path)
+    pid=df['pid']
+    tracks=df['track_uri']
+    mapping=dict()
+    for i in range(len(pid)):
+        playlist=pid[i]
+        track=tracks[i]
+        track=track.split(sep=";")
+        for t in track:
+            if t in mapping:
+                mapping[t]=mapping[t]+";"+str(playlist)
+            else:
+                mapping[t]=str(playlist)
+    return mapping

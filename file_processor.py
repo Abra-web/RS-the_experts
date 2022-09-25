@@ -1,4 +1,4 @@
-from storage_handler import Storage,join, DIR_DATA_JSON,Type,SONGS_COLUMNS,PLAYLIST_COLUMNS
+from storage_handler import Storage,join, DIR_DATA_JSON,Type,SONGS_COLUMNS,PLAYLIST_COLUMNS,read_csv
 import glob,json
 import sys, time
 
@@ -38,6 +38,7 @@ def process_songs(songs):
         for fields in SONGS_COLUMNS:
             song_row.append(str(song[fields]))
         storage.add_item(Type.SONG,song_row)
+
 if __name__ == '__main__':
     storage = Storage()
     json_files=glob.glob(join(DIR_DATA_JSON,"*.json"))
