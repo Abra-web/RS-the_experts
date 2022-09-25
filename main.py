@@ -7,5 +7,6 @@ if __name__ == '__main__':
     storage= Storage()
     #process_all(storage)
     #storage.extract(100)
-    storage.sort(Type.EXTRACT,'pid')
-    storage.sort(Type.EXTRACT,'track_uri')
+    #storage.sort(Type.EXTRACT,'pid')
+   # storage.sort(Type.EXTRACT,'track_uri')
+    storage.make_songs(Type.EXTRACT)

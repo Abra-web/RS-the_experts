@@ -3,7 +3,8 @@ from os import makedirs
 import sys
 import pandas as pd
 from enum import Enum
-from csv_extractor import extract_rows,read_csv,sort
+from csv_extractor import extract_rows,read_csv,sort,make_songs_df
+
 """
 Purpose of script:
 a)  Define directory paths
@@ -19,6 +20,7 @@ DIR_DATA_CSV=join(DIR_DATA,'csv')
 
 CSV_PLAYLISTS=join(DIR_DATA_CSV,"playlists.csv")
 CSV_PLAYLISTS_EXTRACT=CSV_PLAYLISTS.replace(".csv","_extract.csv")
+CSV_SONGS=join(DIR_DATA_CSV,"songs.csv")
 PLAYLIST_COLUMNS=["name",
         "collaborative",
         "pid",
@@ -67,3 +69,10 @@ class Storage:
             sort(CSV_PLAYLISTS,column)
         elif df_type == Type.EXTRACT:
             sort(CSV_PLAYLISTS_EXTRACT, column)
+    def make_songs(self,type):
+        if type == Type.MAIN:
+            map= make_songs_df(CSV_PLAYLISTS)
+        if type == Type.EXTRACT:
+            map= make_songs_df(CSV_PLAYLISTS_EXTRACT)
+        df =  pd.DataFrame.from_dict(map, orient='index',columns=['pid'])
+        df.to_csv(CSV_SONGS)
