@@ -1,19 +1,16 @@
-from os.path import basename, dirname, abspath, join, exists, relpath, isfile
-from os import makedirs, getenv, listdir
-import re
-import logging
+from os.path import dirname, abspath, join, exists
+from os import makedirs
 import sys
-from datetime import date, datetime
 import pandas as pd
 from enum import Enum
-# Windows path fix, if system is windows then it replaces the forward slashes for the regex statement later
+from csv_extractor import extract_rows,read_csv,sort
 """
 Purpose of script:
 a)  Define directory paths
 """
 class Type(Enum):
-    PLAYLIST = 1
-    SONG = 2
+    MAIN = 1
+    EXTRACT = 2
 # local data folder structure
 DIR_ROOT = dirname(abspath(__file__))
 DIR_DATA = join(DIR_ROOT, 'data')
@@ -21,7 +18,7 @@ DIR_DATA_JSON=join(DIR_DATA,'json')
 DIR_DATA_CSV=join(DIR_DATA,'csv')
 
 CSV_PLAYLISTS=join(DIR_DATA_CSV,"playlists.csv")
-
+CSV_PLAYLISTS_EXTRACT=CSV_PLAYLISTS.replace(".csv","_extract.csv")
 PLAYLIST_COLUMNS=["name",
         "collaborative",
         "pid",
@@ -37,14 +34,12 @@ SONGS_COLUMNS=[
         "track_uri",
 ]
 DATAFRAME_COLUMNS=PLAYLIST_COLUMNS+SONGS_COLUMNS
-print(DATAFRAME_COLUMNS)
 class Storage:
     def __init__(self):
-
         self._setup()
         self.df=read_csv(CSV_PLAYLISTS)
+        print("data loaded")
     def _setup(self):
-        # create local data folder structure, if it doesn't exist yet
         for d in [DIR_DATA,DIR_DATA_JSON,DIR_DATA_CSV]:
             makedirs(d, exist_ok=True)
         print('Storage set up.')
@@ -55,8 +50,9 @@ class Storage:
         if not exists(CSV_PLAYLISTS):
                 df = self._give_empty_df(DATAFRAME_COLUMNS)
                 df.to_csv(CSV_PLAYLISTS, index=False)
+    def extract(self,number):
+        extract_rows(CSV_PLAYLISTS,number,CSV_PLAYLISTS_EXTRACT)
     def add_item(self,  row):
-        filepath=CSV_PLAYLISTS
         pid=int(row[2])
         column = self.df['pid'].values
         if pid in column:
@@ -66,11 +62,8 @@ class Storage:
             self.df = pd.concat([self.df, new_row])
     def save_data(self):
         self.df.to_csv(CSV_PLAYLISTS, index=False)
-def read_csv(file_path):
-    try:
-        data = pd.read_csv(file_path, sep=",", encoding='utf-8')
-        # print(data)
-        return data
-    except Exception:
-        print("Something went wrong when trying to open the csv file!")
-        sys.exit(2)
+    def sort(self,df_type,column):
+        if df_type == Type.MAIN:
+            sort(CSV_PLAYLISTS,column)
+        elif df_type == Type.EXTRACT:
+            sort(CSV_PLAYLISTS_EXTRACT, column)
