@@ -1,37 +1,27 @@
-import pandas as pd
+import random
 
-data_set_sorted_by_songuri = pd.read_csv("OURFILELOCATION")
-data_set_sorted_by_playlist_id = pd.read_csv("OURFILELOCATION")
-
-def song_searcher(input_song_uris):
-
-    data_su_column_song_uri = data_set_sorted_by_songuri[["track_uri"]]
-    data_su_column_playlist_id = data_set_sorted_by_songuri[["playlist_id"]]
-
+def song_searcher(input_song_uris, df_songuri):
     playlist_id_collection = []
-    for uri in input_song_uris: # this loop is run 5 times
+    for uri in input_song_uris:  # this loop is run 5 times
+        playlist_id_collection.append(df_songuri.get(uri))
 
-        for song in data_su_column_song_uri:  # this loop is run as many times as there are songs
-            if song == uri:
-                playlist_id = data_su_column_playlist_id[song]
-                playlist_id_collection.append(playlist_id)
+    flat_list = [i for b in map(lambda x:[x] if not isinstance(x, list) else x, playlist_id_collection) for i in b]
+    separated_list = []
+    for element in flat_list:
+        separated_list.append(element.split(';'))
 
-    return playlist_id_collection
+    separated_list = [i for b in map(lambda x:[x] if not isinstance(x, list) else x, separated_list) for i in b]
+    return separated_list
 
-
-def type_preparer():
-    return 0
-    # to be written when data is available
-
-def playlist_counter(playlist_id_collection):
+def playlist_counter(separated_list):
     playlist_dictionary = dict(
-        (playlist_id, playlist_id_collection.count(playlist_id)) for playlist_id in set(playlist_id_collection))
-    key_of_max_value = max(playlist_dictionary, key=playlist_dictionary.get)
-    return key_of_max_value
+        (playlist_id, separated_list.count(playlist_id)) for playlist_id in set(separated_list))
+    sorted_playlist_dict = {key: val for key, val in sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
+    return sorted_playlist_dict
 
 
-def random_picker(key_of_max_value):
-    data_pl_column_playlist_id = data_set_sorted_by_playlist_id[["playlist_id"]]
-    for playlist_id in data_pl_column_playlist_id:
-        if playlist_id == key_of_max_value:
-            return False
+def song_suggester(sorted_playlist_dict, sample_size, df_pl_id):
+    best_match_playlist = df_pl_id.iat[int(list(sorted_playlist_dict.keys())[0]), 1]
+    best_match_playlist_list = best_match_playlist.split(';')
+    output_song_uris = random.sample(best_match_playlist_list, k=sample_size)
+    return output_song_uris
