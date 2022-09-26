@@ -3,13 +3,14 @@ import pandas as pd
 data_set_sorted_by_songuri = pd.read_csv("OURFILELOCATION")
 data_set_sorted_by_playlist_id = pd.read_csv("OURFILELOCATION")
 
-
 def song_searcher(input_song_uris):
-    playlist_id_collection = []
+
     data_su_column_song_uri = data_set_sorted_by_songuri[["track_uri"]]
     data_su_column_playlist_id = data_set_sorted_by_songuri[["playlist_id"]]
 
-    for uri in input_song_uris:  # this loop is run 5 times
+    playlist_id_collection = []
+    for uri in input_song_uris: # this loop is run 5 times
+
         for song in data_su_column_song_uri:  # this loop is run as many times as there are songs
             if song == uri:
                 playlist_id = data_su_column_playlist_id[song]
