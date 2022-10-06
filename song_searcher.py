@@ -7,6 +7,7 @@ def song_searcher(input_song_uris, df_song_uri):
     playlist_id_collection = []
     for uri in input_song_uris:
         playlist_id_collection.append(df_song_uri.get(uri))
+        # TODO: catch if song uri doesnt exist just ignore and carry on
 
     #  flatten the nested playlist collection list
     flat_list = [i for b in map(lambda x:[x] if not isinstance(x, list) else x, playlist_id_collection) for i in b]
