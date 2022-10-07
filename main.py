@@ -1,17 +1,21 @@
 import song_searcher as ss
 import pandas as pd
+import os.path
+from pathlib import Path
 
 if __name__ == '__main__':
+    # home would contain something like "/Users/jame"
+    home = str(Path.home())
     # pull the data from the files
     data_set_sorted_by_song_uri = pd.read_csv(
-        "C:\\Users\\Tabea Heusel\\PycharmProjects\\RS-the_experts\\data\\csv\\songs.csv")
+        home+"\\PycharmProjects\\RS-the_experts\\data\\csv\\songs.csv")
     df_song_uris = pd.DataFrame(data_set_sorted_by_song_uri)
     # transform the dataset to a dict for simple lookup operation (hashtable)
     df_song_uris = df_song_uris.set_index('songs').T.to_dict('list')
 
     # pull dataframe from files
     data_set_sorted_by_playlist_id = pd.read_csv(
-        "C:\\Users\\Tabea Heusel\\PycharmProjects\\RS-the_experts\\data\\csv\\playlists_extract_pid_sort.csv")
+        home+"\\PycharmProjects\\RS-the_experts\\data\\csv\\playlists_extract_pid_sort.csv")
     df_pl_id = pd.DataFrame(data_set_sorted_by_playlist_id)
     # extract only the following columns from dataset cus the rest is not necessary
     df_pl_id = df_pl_id[['pid', 'track_uri']]
