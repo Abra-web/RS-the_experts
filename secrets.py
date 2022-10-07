@@ -1,0 +1,10 @@
+#https://accounts.spotify.com/authorize?client_id=18f2bfce336b407f88e64f8332b09ba3&response_type=code&redirect_uri=https%3A%2F%2Fgithub.com%2FJan-04&scope=playlist-modify-public
+
+#curl -H "Authorization: Basic MThmMmJmY2UzMzZiNDA3Zjg4ZTY0ZjgzMzJiMDliYTM6MTYwMDBhMThkZmE2NDc1MWFmNGJmMDFkY2ZmMzVkMzA=" -d grant_type=authorization_code -d code=AQDrxsdTzdOzHyFrNvYDgw3SomdA3PBioQZJ7eFlSg3zQDA3Z9NclWPBgMCiDXmv37L7JdHsxzvgqIiXrpd2Ce4IEwhahQvccwQdqr5AQ1dyKI2UOhJshmKeo3zQXJDO44FC0YwJQe8ht5wvzeEoxTlK2LuHGX3SETF3bVeVvVMFQxZqXpUPE5YyO5_kZKIEEAZZ8RQ -d redirect_uri=https%3A%2F%2Fgithub.com%2FJan-04 https://accounts.spotify.com/api/token
+
+spotify_user_id = "xye9662388"
+spotify_token = ""
+playlist_id = "3TSW0gjW3YsbtvKG05SebN"
+access_token = "BQBqLw0Tj7LKAqVR6-i9crKMpaVDyzeR61faIrJgRZdeK7fnfgLleM6zFnntDHhYAb3D2equn756TFZB1SMJkmCtvXw9FJop7fmMG1yckQQBvDHy7ioMGydf6BEhZZ2CjtlkndFkb4HWxeLVHBfKCQEwfg2Vm-eGrdmCht1RUwwf-jkSM7crGK9jdkDIsGkpolCwaIoITw1ZybYCNw"
+refresh_token = "AQDGsydg9pX9FGZK-0qQIcrBce3AQF7AcG4Q4nCxlfzT32wJtoqXY2qYzxN2Tuusg8V5gfvE5w1Jn9yPtItn6xk4ufpv-n15xj71hQCO4O_xLiL-X7o-cVbjjXrCb5ZQS5E"
+base_64 = "MThmMmJmY2UzMzZiNDA3Zjg4ZTY0ZjgzMzJiMDliYTM6MTYwMDBhMThkZmE2NDc1MWFmNGJmMDFkY2ZmMzVkMzA="

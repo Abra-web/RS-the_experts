@@ -20,7 +20,7 @@ def process_playlist(playlist,storage):
     playlist_row=list()
     for fields in PLAYLIST_COLUMNS:
         playlist_row.append(str(playlist[fields]))
-    tracks=playlist["tracks"]
+    tracks = playlist["tracks"]
     tracks_list=set()
     artists_list=set()
     album_list=set()
