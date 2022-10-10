@@ -48,7 +48,7 @@ class api_playlist:
             spotify_user_id)
 
         request_body = json.dumps({
-            "name": todayFormatted + " discover weekly", "description": "Discover weekly rescued once again from the brink of destruction by your friendly neighbourhood python script", "public": True
+            "name": "Voor Emmatje", "description": "Test", "public": True
         })
 
         response = requests.post(query, data=request_body, headers={
@@ -60,14 +60,14 @@ class api_playlist:
 
         return response_json["id"]
 
-    def add_to_playlist(self):
+    def add_to_playlist(self, tracks):
         # add all songs to new playlist
         print("Adding songs...")
 
-        self.new_playlist_id = "0U8rSRI9cCXE31MyBLLNKg"#self.create_playlist()
+        self.new_playlist_id = self.create_playlist()
 
         query = "https://api.spotify.com/v1/playlists/{}/tracks?uris={}".format(
-            self.new_playlist_id, self.tracks)
+            self.new_playlist_id, tracks)
 
         response = requests.post(query, headers={"Content-Type": "application/json",
                                                  "Authorization": "Bearer {}".format(self.spotify_token)})
@@ -82,7 +82,41 @@ class api_playlist:
 
         self.spotify_token = refreshCaller.refresh()
 
-        self.find_songs()
+        #self.find_songs()
+
+    def get_name(self, track_id):
+        valid_id = track_id[14:]
+        query = "https://api.spotify.com/v1/tracks/{}".format(
+            valid_id)
+
+        response = requests.get(query, headers={"Content-Type": "application/json",
+                                                 "Authorization": "Bearer {}".format(self.spotify_token)})
+
+        response_json = response.json()
+        print(response_json)
+        return response_json["name"]
+
+    def get_features(self, track_id):
+        valid_id = track_id #track_id[14:]
+        query = "https://api.spotify.com/v1/audio-features/{}".format(
+            valid_id)
+
+        response = requests.get(query, headers={"Content-Type": "application/json",
+                                                "Authorization": "Bearer {}".format(self.spotify_token)})
+
+        response_json = response.json()
+        return response_json
+
+    def get_me(self):
+        query = "https://api.spotify.com/v1/me/top/{}".format(
+            "tracks")
+
+        response = requests.get(query, headers={"Content-Type": "application/json",
+                                                "Authorization": "Bearer {}".format(self.spotify_token)})
+
+        response_json = response.json()
+        print(response_json)
+
 
 if __name__ == '__main__':
 

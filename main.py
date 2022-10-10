@@ -1,7 +1,9 @@
-import song_searcher as ss
+from song_searcher import song_searcher
 import pandas as pd
 import os.path
 from pathlib import Path
+
+from api_playlist import api_playlist
 
 if __name__ == '__main__':
     # home would contain something like "/Users/jame"
@@ -28,9 +30,20 @@ if __name__ == '__main__':
                        'spotify:track:69bp2EbF7Q2rqc5N3ylezZ']
 
     # execute functions from song_searcher file (commented there)
-    playlist_collection = ss.song_searcher(input_song_uris, df_song_uris)
-    sorted_playlist_dictionary = ss.playlist_counter(playlist_collection)
-    output_song_uris = ss.song_suggester(sorted_playlist_dictionary, 5, df_pl_id)
+    rs = song_searcher(input_song_uris , df_song_uris, df_pl_id)
+    output_song_uris = rs.recommend_songs()
+
+    #a = api_playlist()
+    #a.call_refresh()
+    tracks =''
+    for element in output_song_uris:
+        tracks += element+","
+    tracks = tracks[:-1]
 
     # print output, hopefully soon connected to Spotify API to add to our playlist
-    print(output_song_uris)
+    #print(output_song_uris)
+    #a.add_to_playlist(tracks)
+    #print(a.get_name('spotify:track:7H6ev70Weq6DdpZyyTmUXk'))
+    #print(a.get_features('6Sy9BUbgFse0n0LPA5lwy5'))
+    #print(a.get_me())
+
