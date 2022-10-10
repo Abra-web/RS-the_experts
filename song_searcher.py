@@ -10,7 +10,7 @@ class song_searcher:
 
     def recommend_songs(self, sample_size):
 
-        playlist_collection = song_searcher()
+        playlist_collection = self.song_searcher()
         sorted_playlist_dictionary = self.playlist_counter(playlist_collection)
         return self.song_suggester(sorted_playlist_dictionary, sample_size)
 
@@ -58,10 +58,11 @@ class song_searcher:
             best_match_playlist += self.df_pl_id.iat[
                 int(list(sorted_playlist_dict.keys())[i]), 1]
 
-        best_match_playlist_list = best_match_playlist.split(';') # stores all the songs of the 5 best playlists
-        res = sorted(set(best_match_playlist_list), key=lambda x: best_match_playlist_list.count(x), reverse=True) #sort songs_urls based on how many times the song appears in the 5 best playlists
-        res = [x for x in res if x not in self.input_songs_uri] # remove the songs from the original playlist
-        output_song_uris = res[:sample_size]                    # get the n best songs that will be recommended
+        best_match_playlist_list = best_match_playlist.split(';')  # stores all the songs of the 5 best playlists
+        res = sorted(set(best_match_playlist_list), key=lambda x: best_match_playlist_list.count(x),
+                     reverse=True)  # sort songs_urls based on how many times the song appears in the 5 best playlists
+        res = [x for x in res if x not in self.input_songs_uri]  # remove the songs from the original playlist
+        output_song_uris = res[:sample_size]  # get the n best songs that will be recommended
         songs_occurences = []
         for i in output_song_uris:
             songs_occurences.append(best_match_playlist_list.count(i))

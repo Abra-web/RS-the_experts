@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # execute functions from song_searcher file (commented there)
     rs = song_searcher(input_song_uris , df_song_uris, df_pl_id)
-    output_song_uris = rs.recommend_songs()
+    output_song_uris = rs.recommend_songs(5)
 
     #a = api_playlist()
     #a.call_refresh()
