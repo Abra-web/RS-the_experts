@@ -1,19 +1,13 @@
-from storage_handler import Storage, join, DIR_DATA_CSV, DIR_DATA_JSON, Type
-import glob
-from file_processor import process_all
-
-from api_playlist import api_playlist
-
+from storage_handler import Storage
 from song_searcher import song_searcher
 
 if __name__ == '__main__':
 
-
     storage = Storage()
     df_pl_id = storage.give_playlist()
     df_song_uris = storage.give_songs()
-    print('Which playlist would you like to recommend songs too?')
-    playlist_id = int(input())
+    #print('Which playlist would you like to recommend songs too?')
+    playlist_id = int(12345)
     song_strings = df_pl_id[df_pl_id['pid']==playlist_id]["track_uri"].item()
     song_uris = song_strings.split(';')
 

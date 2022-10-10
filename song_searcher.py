@@ -17,6 +17,7 @@ class song_searcher:
     # returns a list of how many times a song appears in all playlists, playlist_id will be in the list
     # if song appears in n playlists, playlist_id will be in the list n-times
     def song_searcher(self):
+        print('gather all playlists')
         playlist_id_collection = []
         songs_error = []
         for uri in self.input_song_uris:
@@ -40,12 +41,14 @@ class song_searcher:
 
     # output: ordered dict of key: playlist_id, value: similar songs/length of playlist
     def playlist_counter(self, separated_list):
+        print('sort for playlists')
         li = []
         for playlist_id in set(separated_list):
-            li.append((playlist_id, len(self.df_playlist_id[self.df_playlist_id['pid']==playlist_id]["track_uri"].item().split(';'))))
+            li.append((playlist_id, len(self.df_playlist_id[self.df_playlist_id['pid']==int(playlist_id)]["track_uri"].item())))
         length_playlist = dict(li)
+        print('gathered length of playlists')
         playlist_dictionary = dict(
-            (playlist_id, separated_list.count(playlist_id) / length_playlist) for playlist_id in set(separated_list))
+            (playlist_id, separated_list.count(playlist_id) / length_playlist.get[playlist_id]) for playlist_id in set(separated_list))
         sorted_playlist_dict = {key: val for key, val in
                                 sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
         return sorted_playlist_dict
@@ -53,6 +56,7 @@ class song_searcher:
     # sample_size: number of songs u want to recommend, sorted_playlist_dict: ordered dict of key: playlist_id, value: similar songs/length of playlist
     # outputs a list with the song uris
     def song_suggester(self, sorted_playlist_dict, sample_size):
+        print('get best songs')
         best_match_playlist = ''
         for i in range(5):
             best_match_playlist += self.df_playlist_id[self.df_playlist_id['pid']==
