@@ -1,5 +1,9 @@
 import sys
 import pandas as pd
+columns=["name","pid","num_albums","num_tracks","num_followers","num_edits","num_artists","artist_name","album_name","track_uri"] #"collaborative",
+columns.remove("pid")
+columns.remove("track_uri")
+
 def extract_rows(path, number,outpath):
     try:
         data=read_csv(path)
@@ -19,6 +23,16 @@ def sort(df_path,column):
     df = read_csv(df_path)
     df2=df.sort_values(by=column)
     df2.to_csv(df_path.replace(".csv",f"_{column}_sort.csv"),index=False)
+
+
+def drop_columns(data):
+    columns_to_drop = columns
+    try:
+        data = data.drop(columns_to_drop,axis=1)
+    except Exception:
+        print("Something went wrong")
+    data.reset_index(inplace=True, drop=True)
+    return data
 
 def make_songs_df(path):
     df=read_csv(path)
