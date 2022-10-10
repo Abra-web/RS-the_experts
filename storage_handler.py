@@ -44,7 +44,8 @@ DATAFRAME_COLUMNS=PLAYLIST_COLUMNS+SONGS_COLUMNS
 class Storage:
     def __init__(self):
         self._setup()
-        self.df=self.give_playlist()
+        self.playlists=self.give_playlist()
+        self.songs=self.give_songs()
         print("data loaded")
     def _setup(self):
         for d in [DIR_DATA,DIR_DATA_JSON,DIR_DATA_CSV,DIR_PICKLE]:
@@ -68,11 +69,9 @@ class Storage:
             new_row = pd.DataFrame([row], columns=DATAFRAME_COLUMNS)
             self.df = pd.concat([self.df, new_row])
     def give_songs(self):
-        pickle_in = open(PICKLE_SONGS, "rb")
-        return pickle.load(pickle_in)
+        return self.songs
     def give_playlist(self):
-        pickle_in=open(PICKLE_PLAYLIST,"rb")
-        return pickle.load(pickle_in)
+        return self.playlists
     def save_data(self):
         self.df.to_csv(CSV_PLAYLISTS, index=False)
     def sort(self,df_type,column):
