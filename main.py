@@ -13,8 +13,8 @@ if __name__ == '__main__':
     df_pl_id = storage.give_playlist()
     df_song_uris = storage.give_songs()
     print('Which playlist would you like to recommend songs too?')
-    playlist_id = input()
-    song_strings = df_pl_id[12330]
+    playlist_id = int(input())
+    song_strings = df_pl_id[df_pl_id['pid']==playlist_id]["track_uri"].item()
     song_uris = song_strings.split(';')
 
     # execute functions from song_searcher file (commented there)
