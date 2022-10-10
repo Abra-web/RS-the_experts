@@ -9,4 +9,7 @@ if __name__ == '__main__':
     #storage.extract(100)
     #storage.sort(Type.EXTRACT,'pid')
    # storage.sort(Type.EXTRACT,'track_uri')
-    storage.make_songs(Type.EXTRACT)
+    #storage.make_songs(Type.MAIN)
+    #storage.drop_columns()
+    storage.pickle_playlist()
+    b=2
