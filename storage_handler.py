@@ -44,8 +44,8 @@ DATAFRAME_COLUMNS=PLAYLIST_COLUMNS+SONGS_COLUMNS
 class Storage:
     def __init__(self):
         self._setup()
-        self.playlists=self.give_playlist()
-        self.songs=self.give_songs()
+        self.playlists = self.give_playlist()
+        self.songs = self.give_songs()
         print("data loaded")
     def _setup(self):
         for d in [DIR_DATA,DIR_DATA_JSON,DIR_DATA_CSV,DIR_PICKLE]:
