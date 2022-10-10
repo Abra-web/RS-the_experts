@@ -1,26 +1,25 @@
 import math
 import numpy as np
-#import spotipy # TODO
+import spotipy
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import precision_recall_fscore_support
-#from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyClientCredentials
 from numpy import dot
 from numpy.linalg import norm
 from sklearn.metrics import ndcg_score
 
-# for testing purposes
-#if __name__ == '__main__':
-#    # pull the data from the files
-#    the_playlist = ["id1", "id2", "id3", "id4", "id5"]
-#    assumed_recommended_list =
-
 
 class Evaluate:
-    def __init__(self, playlist): # assuming playlist is a list of song urls
+    def __init__(self, playlist):  # assuming playlist is a list of song urls
         self.playlist = playlist
+        # Authentication - without user
+        cid = "06c57b85db524a1094cf9a9e3258b68c"
+        secret = "a1714a109e3542fa81a7c4c6da457fb8"
+        client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
+        self.sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
     def get_accuracy_of_ranks(self, playlist, recommendations):
         recommended_rank = {}
@@ -38,23 +37,23 @@ class Evaluate:
         # get cosine similarity of the song to each song in the playlist one by one. In the end normalize according to playlist size
         for song in playlist:
             data_of_song = self.get_song_values(song)
-            final_value += dot(data_of_recommended, data_of_song) / (norm(data_of_recommended) * norm(data_of_song)) # returns a value at most 1
+            final_value += dot(data_of_recommended, data_of_song) / (norm(data_of_recommended) * norm(data_of_song))  # returns a value at most 1
 
-        return final_value / len(playlist) # normalize to 0-1
+        return final_value / len(playlist)  # normalize to 0-1
 
     def get_song_values(self, songURL):
-        data_of_recommended_dict = audio_features(songURL) # TODO here we assume we get the values as a dict
+        data_of_recommended_dict = self.sp.audio_features(songURL)[0]
 
         # since we will get dict, turn it into list (which is only a song) so that we can use it for cosine similarity
         data_of_recommended_list = list(data_of_recommended_dict.values())
         # form the dict we need; [0:1], [3], [5:10]
-        a, b, c = data_of_recommended_list[0:1], data_of_recommended_list[3], data_of_recommended_list[5:10]
+        a, b, c = data_of_recommended_list[0:1], [data_of_recommended_list[3]], data_of_recommended_list[5:10]
         return a + b + c
 
     # defining hits, lower the hit benchmark depending on the size of the playlist
     def calculate_nDCG(self, playlist, recommendations):
         new_ideal_rank, new_recommended_rank = self.get_accuracy_of_ranks(playlist, recommendations)
-        nDCG = ndcg_score(new_ideal_rank.values(), new_recommended_rank.values())
+        nDCG = ndcg_score(np.asarray([list(new_ideal_rank.values())]), np.asarray([list(new_recommended_rank.values())]))
         return nDCG
 
 
