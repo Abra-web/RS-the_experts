@@ -50,10 +50,11 @@ class song_searcher:
         for playlist_id in set(separated_list):
             print(int(playlist_id))
             song_uris = self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';')
-            li.append((int(playlist_id), len(song_uris)))
-        length_playlist = dict(li)
-        playlist_dictionary = dict(
-            (playlist_id, separated_list.count(playlist_id) / length_playlist[int(playlist_id)]) for playlist_id in set(separated_list))
+            li.append((int(playlist_id), separated_list.count(playlist_id)/len(song_uris)))
+        playlist_dictionary = dict(li)
+        #the dict doesnt have to exist twice it can be generated in the loop
+        #playlist_dictionary = dict(
+        #    (playlist_id, separated_list.count(playlist_id) / length_playlist[int(playlist_id)]) for playlist_id in set(separated_list))
         sorted_playlist_dict = {key: val for key, val in
                                 sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
 
@@ -65,17 +66,23 @@ class song_searcher:
     # outputs a list with the song uris
     def song_suggester(self, sorted_playlist_dict, sample_size):
         best_match_playlist = []
+        loop_counter = 0;
         for playlist_id in sorted_playlist_dict:
+            if loop_counter == 4:
+                best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
+                break
+            else:
+                best_match_playlist.append(
+                    self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
 
-            best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
-
-        best_match_playlist_flatlist = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, best_match_playlist) for i in b]
+            loop_counter +=1
+        best_match_playlists_song_uris_flatlist = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, best_match_playlist) for i in b]
         #best_match_playlist_list = best_match_playlist.split(';')  # stores all the songs of the 5 best playlists
-        res = sorted(set(best_match_playlist_flatlist), key=lambda x: best_match_playlist_flatlist.count(x),
+        res = sorted(set(best_match_playlists_song_uris_flatlist), key=lambda x: best_match_playlists_song_uris_flatlist.count(x),
                      reverse=True)  # sort songs_urls based on how many times the song appears in the 5 best playlists
         res = [x for x in res if x not in self.input_song_uris]  # remove the songs from the original playlist
         output_song_uris = res[:sample_size]  # get the n best songs that will be recommended
         songs_occurences = []
         for i in output_song_uris:
-            songs_occurences.append(best_match_playlist_flatlist.count(i))
+            songs_occurences.append(best_match_playlists_song_uris_flatlist.count(i))
         return output_song_uris
