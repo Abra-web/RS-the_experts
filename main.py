@@ -1,12 +1,6 @@
-from storage_handler import Storage, join, DIR_DATA_CSV, DIR_DATA_JSON, Type
-from pytictoc import TicToc
-import glob
-from file_processor import process_all
-
-from api_playlist import api_playlist
-import numpy
-
+from storage_handler import Storage
 from song_searcher import song_searcher
+from pytictoc import TicToc
 
 if __name__ == '__main__':
     t = TicToc()

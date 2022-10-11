@@ -11,6 +11,7 @@ class song_searcher:
         self.df_playlist_id = df_playlist_id
 
     def recommend_songs(self, sample_size):
+
         playlist_collection = self.song_searcher()
         print(playlist_collection[1:10])
         print(len(playlist_collection))

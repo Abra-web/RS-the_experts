@@ -1,9 +1,8 @@
 from os.path import dirname, abspath, join, exists
 from os import makedirs
-import sys
 import pandas as pd
 from enum import Enum
-from csv_extractor import extract_rows,read_csv,sort,make_songs_df,drop_columns
+from csv_extractor import extract_rows,sort,make_songs_df,drop_columns
 import pickle
 """
 Purpose of script:

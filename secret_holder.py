@@ -1,7 +1,3 @@
-#https://accounts.spotify.com/authorize?client_id=18f2bfce336b407f88e64f8332b09ba3&response_type=code&redirect_uri=https%3A%2F%2Fgithub.com%2FJan-04&scope=playlist-modify-public
-
-#curl -H "Authorization: Basic MThmMmJmY2UzMzZiNDA3Zjg4ZTY0ZjgzMzJiMDliYTM6MTYwMDBhMThkZmE2NDc1MWFmNGJmMDFkY2ZmMzVkMzA=" -d grant_type=authorization_code -d code=AQDrxsdTzdOzHyFrNvYDgw3SomdA3PBioQZJ7eFlSg3zQDA3Z9NclWPBgMCiDXmv37L7JdHsxzvgqIiXrpd2Ce4IEwhahQvccwQdqr5AQ1dyKI2UOhJshmKeo3zQXJDO44FC0YwJQe8ht5wvzeEoxTlK2LuHGX3SETF3bVeVvVMFQxZqXpUPE5YyO5_kZKIEEAZZ8RQ -d redirect_uri=https%3A%2F%2Fgithub.com%2FJan-04 https://accounts.spotify.com/api/token
-
 spotify_user_id = "xye9662388"
 spotify_token = ""
 playlist_id = "3TSW0gjW3YsbtvKG05SebN"
