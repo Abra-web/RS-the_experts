@@ -10,6 +10,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from numpy import dot
 from numpy.linalg import norm
 from sklearn.metrics import ndcg_score
+from sklearn import preprocessing
 
 
 class Evaluate:
@@ -21,25 +22,59 @@ class Evaluate:
         client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
         self.sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-    def get_accuracy_of_ranks(self, playlist, recommendations):
+    def get_accuracy_of_ranks(self, recommendations):
         recommended_rank = {}
         # with this loop we acquire new rank to compare with other rank (the recommended list)
         for recommendation in recommendations:
-            recommended_rank[recommendation] = self.get_relevance_score(playlist, recommendation)
+            recommended_rank[recommendation] = self.get_relevance_score(recommendation)
 
         ideal_rank = {k: v for k, v in sorted(recommended_rank.items(), key=lambda item: item[1])} # sorting to get idealized rank
         return ideal_rank, recommended_rank
 
     # takes the recommended song, goes through the whole playlist and gets a relevance score of playlist <-> recommended song
-    def get_relevance_score(self, playlist, songURL):
-        final_value = 0
+    def get_relevance_score(self, songURL):
+        final_values = []
         data_of_recommended = self.get_song_values(songURL)
+        # normalizing loudness
+        data_of_recommended[1] = (data_of_recommended[1] - (-60)) / (0 - (-60))
         # get cosine similarity of the song to each song in the playlist one by one. In the end normalize according to playlist size
-        for song in playlist:
+        for song in self.playlist:
             data_of_song = self.get_song_values(song)
-            final_value += dot(data_of_recommended, data_of_song) / (norm(data_of_recommended) * norm(data_of_song))  # returns a value at most 1
+            # normalizing loudness
+            data_of_song[1] = (data_of_song[1] - (-60)) / (0 - (-60))
 
-        return final_value / len(playlist)  # normalize to 0-1
+            # for debug
+            # print("Data of song")
+            # print(data_of_song)
+            # print("Data of recommended")
+            # print(data_of_recommended)
+            # print("Similarity values")
+            # print(dot(data_of_recommended, data_of_song) / (norm(data_of_recommended) * norm(data_of_song)))
+            final_values.append(dot(data_of_recommended, data_of_song) / (norm(data_of_recommended) * norm(data_of_song)))  # returns a value at most 1
+            # print("")
+
+        # print("")
+        # print("")
+        # testing
+        # print("Old")
+        # print("Final values:")
+        # print(final_values)
+        # print("Normally")
+        # temp_final_value = sum(final_values) / len(self.playlist)
+        # print(temp_final_value)
+        # final_values = preprocessing.normalize([final_values])  # normalize list
+        # print("New")
+        # print("New final values:")
+        # print(final_values)
+        # print("Actually")
+        # final_value = sum(final_values[0]) / len(self.playlist)  # get final score
+        # print(final_value)
+        final_values = preprocessing.normalize([final_values])
+        # print(final_values)
+        final_value = sum(final_values[0]) / len(final_values[0])
+        # print(final_values[0])
+        # print(final_value)
+        return final_value
 
     def get_song_values(self, songURL):
         data_of_recommended_dict = self.sp.audio_features(songURL)[0]
@@ -50,66 +85,46 @@ class Evaluate:
         a, b, c = data_of_recommended_list[0:1], [data_of_recommended_list[3]], data_of_recommended_list[5:10]
         return a + b + c
 
-    # defining hits, lower the hit benchmark depending on the size of the playlist
-    def calculate_nDCG(self, playlist, recommendations):
-        new_ideal_rank, new_recommended_rank = self.get_accuracy_of_ranks(playlist, recommendations)
-        nDCG = ndcg_score(np.asarray([list(new_ideal_rank.values())]), np.asarray([list(new_recommended_rank.values())]))
-        return nDCG
+    # main function here
+    def calculate_nDCG(self, recommendations):
+        new_ideal_rank, new_recommended_rank = self.get_accuracy_of_ranks(recommendations)
 
+        ideal_values = list(new_ideal_rank.values())
+        # not sure if this is right, but I think changing the final values into integers sorted by increasing vals
+        # makes us give more legit result
+        recommended_values = self.swap_val(self.replace_val(list(new_recommended_rank.values())))
 
+        nDCG = ndcg_score(np.asarray([self.replace_val(ideal_values)]), np.asarray([recommended_values]))
+        # print("Recommended rank")
+        # print(recommended_values)
+        # print("Ideal")
+        # print(ideal_values)
+        compared_to_playlist = sum(list(new_recommended_rank.values())) / len(new_recommended_rank)
+        return nDCG, compared_to_playlist
 
+    def replace_val(self, given_list):
+        temp = given_list
+        current_smallest = 1
+        i = 1
+        for x in range(0, len(temp)):
+            for y in temp:
+                if y < current_smallest:
+                    current_smallest = y
 
+            index = temp.index(current_smallest)
+            temp[index] = i
+            i += 1
+            current_smallest = 1
 
+        return temp
 
+    def swap_val(self, given_list):
+        temp = given_list
+        a = len(given_list) - 1
+        for x in range(0, int(len(given_list) / 2)):
+            temp[x], temp[a] = temp[a], temp[x]
+            a -= 1
 
+        return temp
 
-
-    """ 
-    -----TRASH----
-    This method defines our methodology;
-    In the end, it will return us a new df "itemID | songURL | Relevant"
-    
-    How we compute the relevance for each song?
-    - I suppose what we can do here is that for every recommended song we will go through all the songs the playlist 
-    contains (so like "user's preferences") and see how much the values of "'danceability', 'energy', ..." differ
-    If addition of difference is >1 give 0 for relevance, else 1 (this part can be changed; TODO)
-    
-    :param playlist: The playlist that we tried to recommend to
-    :param recommendations: The recommendations the playlist got
-    def get_user_rated_movies_plots(self, playlist, recommendations):
-
-        playlist  # select the ratings of the user
-        rated_movies_df = movies_df.loc[
-            list(playlist['item'])]  # select the movie information for the movies rated by the user
-        rated_movies_df = rated_movies_df[['title', 'plot']]  # select only the information we need
-        playlist = playlist.set_index('item')  # set the index for the next join
-        rated_movies_df = rated_movies_df.join(playlist['rating'], on='item')  # join the two dataframes
-        rated_movies_df['relevant'] = rated_movies_df['rating'].apply(
-            lambda x: 1 if x > 3 else 0)  # compute the relevance values for the user
-        return rated_movies_df
-
-# I need the playlist, the songs it contains, and data about it
-    def creating_test_training_set_with_kFold(self):
-        user_plots_ratings_df = get_user_rated_movies_plots(user, ratings_df,
-                                                            movies_df)  # retrieve user info with the previously defined method
-
-        X_plots = user_plots_ratings_df['plot']  # select the Plot column, from which we will compute ourTF-IDF features
-        y = user_plots_ratings_df['relevant']  # select the elevant column, that will be used as label
-
-        kf = KFold()
-        X_plots_train, X_plots_test, y_train, y_test = train_test_split(X_plots, y,
-                                                                        test_size=0.2)  # randomly splits the data in train and test, we specify that 20% of the data will go into the test set
-
-        vectorizer = TfidfVectorizer()
-        X_train = vectorizer.fit_transform(X_plots_train)  # Trains our TF-IDF model and computes the features
-
-        neigh = KNeighborsClassifier(n_neighbors=10)
-        neigh.fit(X_train, y_train)  # train our cassifier
-
-        X_test = vectorizer.transform(X_plots_test)
-        y_pred = neigh.predict(X_test)  # evaluates the predictions of the classifier
-
-        return precision_recall_fscore_support(y_test, y_pred, average="binary",
-                                               zero_division=0)  # compare the real relevance values with the predicted one, and return precision, recall, and fscore
-        """
 
