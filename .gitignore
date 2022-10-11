@@ -223,7 +223,7 @@ data_dump/
 # IDEA files
 .idea/
 ttt/
-secrets.py
+secret_holder.py
 
 
 ignore/
