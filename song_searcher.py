@@ -2,6 +2,7 @@ import random
 
 import pandas as pd
 
+from collections import Counter
 
 class song_searcher:
 
@@ -46,28 +47,21 @@ class song_searcher:
 
     # output: ordered dict of key: playlist_id, value: similar songs/length of playlist
     def playlist_counter(self, separated_list):
-        print("entering playlist counter ... ")
-        li = []
-        for playlist_id in set(separated_list):
-            print(int(playlist_id))
-            song_uris = self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';')
-            li.append((int(playlist_id), separated_list.count(playlist_id)/len(song_uris)))
-        playlist_dictionary = dict(li)
-        #the dict doesnt have to exist twice it can be generated in the loop
-        #playlist_dictionary = dict(
-        #    (playlist_id, separated_list.count(playlist_id) / length_playlist[int(playlist_id)]) for playlist_id in set(separated_list))
-        sorted_playlist_dict = {key: val for key, val in
-                                sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
+        # dictionary of playlists
+        lis = Counter(separated_list)
+        return lis
 
-        #remove first item from the dict:  this is the input playlist we dont want to use
-        (k := next(iter(sorted_playlist_dict)), sorted_playlist_dict.pop(k))
-        return sorted_playlist_dict
 
     # sample_size: number of songs u want to recommend, sorted_playlist_dict: ordered dict of key: playlist_id, value: similar songs/length of playlist
     # outputs a list with the song uris
-    def song_suggester(self, sorted_playlist_dict, sample_size):
+    def song_suggester(self, lis, sample_size):
+        playlist_dictionary = lis
+        sorted_playlist_dict = {key: val for key, val in
+                                sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
+        # remove first item from the dict:  this is the input playlist we don't want to use
+        (k := next(iter(sorted_playlist_dict)), sorted_playlist_dict.pop(k))
         best_match_playlist = []
-        loop_counter = 0;
+        loop_counter = 0
         for playlist_id in sorted_playlist_dict:
             if loop_counter == 4:
                 best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
