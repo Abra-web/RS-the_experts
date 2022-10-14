@@ -6,6 +6,7 @@ from pytictoc import TicToc
 from api_playlist import api_playlist
 from song_searcher import song_searcher
 from storage_handler import Storage
+import evaluation as eval
 
 if __name__ == '__main__':
     def print1by1(item):
@@ -24,7 +25,6 @@ if __name__ == '__main__':
     output_size = int(input('How many songs would you like to have suggested?'))
     song_strings = df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
     song_uris = song_strings.split(';')
-    song_uris = ['spotify:track:5lKkgKB4yZ6BW0Aps1CKcL?si=f87d575a3ada4e4e']
     input_confirmation = '\n Input received! I am now creating your personalized playlist...\n'
     hearts = "  ### ###         ### ###         ### ###         ### ###  \n #########       #########       #########       ######### \n  #######         #######         #######         #######  \n   #####           #####           #####           #####   \n    ###             ###             ###             ###    \n     #               #               #               #     \n \n"
     print1by1(input_confirmation)
@@ -55,6 +55,8 @@ if __name__ == '__main__':
     for item in song_uris[0:6]:
         print(a.get_name(item))
     print("\n---------------------\n")
+    cal = eval.Evaluate(song_uris, output_song_uris)
+    print(cal.give())
     t.toc()
 
     # print output, hopefully soon connected to Spotify API to add to our playlist
