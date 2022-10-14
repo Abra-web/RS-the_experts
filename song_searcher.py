@@ -13,8 +13,6 @@ class song_searcher:
     def recommend_songs(self, sample_size):
 
         playlist_collection = self.song_searcher()
-        print(playlist_collection[1:10])
-        print(len(playlist_collection))
         sorted_playlist_dictionary = self.playlist_counter(playlist_collection)
         return self.song_suggester(sorted_playlist_dictionary, sample_size)
 
@@ -49,13 +47,8 @@ class song_searcher:
         print("entering playlist counter ... ")
         li = []
         for playlist_id in set(separated_list):
-            print(int(playlist_id))
-            song_uris = self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';')
-            li.append((int(playlist_id), separated_list.count(playlist_id)/len(song_uris)))
+            li.append((int(playlist_id), separated_list.count(playlist_id)/self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]["num_tracks"].item()))
         playlist_dictionary = dict(li)
-        #the dict doesnt have to exist twice it can be generated in the loop
-        #playlist_dictionary = dict(
-        #    (playlist_id, separated_list.count(playlist_id) / length_playlist[int(playlist_id)]) for playlist_id in set(separated_list))
         sorted_playlist_dict = {key: val for key, val in
                                 sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
 
@@ -67,7 +60,7 @@ class song_searcher:
     # outputs a list with the song uris
     def song_suggester(self, sorted_playlist_dict, sample_size):
         best_match_playlist = []
-        loop_counter = 0;
+        loop_counter = 0
         for playlist_id in sorted_playlist_dict:
             if loop_counter == 4:
                 best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
