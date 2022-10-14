@@ -42,13 +42,11 @@ class api_playlist:
         print("Trying to create playlist...")
         today = date.today()
 
-        todayFormatted = today.strftime("%d/%m/%Y")
-
         query = "https://api.spotify.com/v1/users/{}/playlists".format(
             spotify_user_id)
 
         request_body = json.dumps({
-            "name": "Voor Emmatje", "description": "Test", "public": True
+            "name": "test", "description": "Test", "public": True
         })
 
         response = requests.post(query, data=request_body, headers={
@@ -93,7 +91,7 @@ class api_playlist:
                                                  "Authorization": "Bearer {}".format(self.spotify_token)})
 
         response_json = response.json()
-        print(response_json)
+        #print(response_json)
         return response_json["name"]
 
     def get_features(self, track_id):
@@ -107,16 +105,28 @@ class api_playlist:
         response_json = response.json()
         return response_json
 
-    def get_me(self):
-        query = "https://api.spotify.com/v1/me/top/{}".format(
-            "tracks")
+    def get_songs(self, uri):
+        print("Finding songs in playlist...")
+        # Loop through playlist tracks, add them to list
 
-        response = requests.get(query, headers={"Content-Type": "application/json",
-                                                "Authorization": "Bearer {}".format(self.spotify_token)})
+        query = "https://api.spotify.com/v1/playlists/{}/tracks".format(
+            playlist_id)
+
+        response = requests.get(query,
+                                headers={"Content-Type": "application/json",
+                                         "Authorization": "Bearer {}".format(self.spotify_token)})
 
         response_json = response.json()
-        print(response_json)
 
+        #print(response)
+
+        tracks = ''
+
+        for i in response_json["items"]:
+            tracks += (i["track"]["uri"] + ",")
+        tracks = tracks[:-1]
+
+        return tracks
 
 if __name__ == '__main__':
 
