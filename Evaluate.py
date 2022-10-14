@@ -99,8 +99,8 @@ class Evaluate:
         # print(recommended_values)
         # print("Ideal")
         # print(ideal_values)
-        compared_to_playlist = sum(list(new_recommended_rank.values())) / len(new_recommended_rank)
-        return nDCG, compared_to_playlist
+        avg_to_playlist = sum(list(new_recommended_rank.values())) / len(new_recommended_rank)
+        return nDCG, avg_to_playlist, list(new_recommended_rank.values())
 
     def replace_val(self, given_list):
         temp = given_list

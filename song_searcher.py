@@ -22,7 +22,7 @@ class song_searcher:
     # returns a list of how many times a song appears in all playlists, playlist_id will be in the list
     # if song appears in n playlists, playlist_id will be in the list n-times
     def song_searcher(self):
-        print("entering song searcher")
+        # print("entering song searcher")
         playlist_id_collection = []
         songs_error = []
         for uri in self.input_song_uris:
@@ -32,7 +32,7 @@ class song_searcher:
             else:
                 songs_error.append(uri)
 
-        print(str(len(songs_error))+" songs were not in our database.")
+        # print(str(len(songs_error))+" songs were not in our database.")
 
         #  flatten the nested playlist collection list
         flat_list = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, playlist_id_collection) for i in b]
@@ -44,14 +44,14 @@ class song_searcher:
 
         # flatten created nested list again to get ['id1', 'id2', ...]
         separated_list = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, separated_list) for i in b]
-        print("exiting song searcher...")
+        # print("exiting song searcher...")
         return separated_list
 
     # output: ordered dict of key: playlist_id, value: similar songs/length of playlist
     def playlist_counter(self, separated_list):
-        print("entering playlist counter ... ")
+        # print("entering playlist counter ... ")
         li = []
-        print('set: '+str(len(set(separated_list))))
+        # print('set: '+str(len(set(separated_list))))
         for playlist_id in set(separated_list):
            value = separated_list.count(playlist_id) / self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)][
                 "num_tracks"].item()
@@ -59,7 +59,7 @@ class song_searcher:
             li.append((int(playlist_id), value))
             if len(li) > self.list_length:
                 break
-        print('norming done')
+        # print('norming done')
         li.sort(key=lambda i: i[1], reverse=True)
         print(li)
         return dict(li)
