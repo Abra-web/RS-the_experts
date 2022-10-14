@@ -14,23 +14,19 @@ class song_searcher:
     def recommend_songs(self, sample_size):
 
         playlist_collection = self.song_searcher()
-        print(playlist_collection[1:10])
-        print(len(playlist_collection))
         sorted_playlist_dictionary = self.playlist_counter(playlist_collection)
         return self.song_suggester(sorted_playlist_dictionary, sample_size)
 
     # returns a list of how many times a song appears in all playlists, playlist_id will be in the list
     # if song appears in n playlists, playlist_id will be in the list n-times
     def song_searcher(self):
-        print("entering song searcher")
         playlist_id_collection = []
         songs_error = []
         for uri in self.input_song_uris:
             try:
                 playlist_id_collection.append(self.df_song_uri.get(uri))
             except:
-                songs_error.append(uri)
-                print('song was not in our database')
+                print('{} is not in our database'.format(uri))
 
         #  flatten the nested playlist collection list
         flat_list = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, playlist_id_collection) for i in b]
@@ -42,20 +38,27 @@ class song_searcher:
 
         # flatten created nested list again to get ['id1', 'id2', ...]
         separated_list = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, separated_list) for i in b]
-        print("exiting song searcher...")
         return separated_list
 
     # output: ordered dict of key: playlist_id, value: similar songs/length of playlist
     def playlist_counter(self, separated_list):
         # dictionary of playlists
-        lis = Counter(separated_list)
-        return lis
+        counted_playlists = dict(Counter(separated_list))
+        new = []
+
+        for playlist_id in counted_playlists.keys():
+            value = counted_playlists[playlist_id]/self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['num_tracks'].item()
+            if value > 0.3:
+                new.append((playlist_id, value))
+            if len(new) == 10:
+                break
+        return dict(new)
 
 
     # sample_size: number of songs u want to recommend, sorted_playlist_dict: ordered dict of key: playlist_id, value: similar songs/length of playlist
     # outputs a list with the song uris
-    def song_suggester(self, lis, sample_size):
-        playlist_dictionary = lis
+    def song_suggester(self, counted_playlists, sample_size):
+        playlist_dictionary = counted_playlists
         sorted_playlist_dict = {key: val for key, val in
                                 sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
         # remove first item from the dict:  this is the input playlist we don't want to use
@@ -80,4 +83,14 @@ class song_searcher:
         songs_occurences = []
         for i in output_song_uris:
             songs_occurences.append(best_match_playlists_song_uris_flatlist.count(i))
+        print(songs_occurences)
         return output_song_uris
+
+
+    def generate_explanation(self):
+        explanation = ""
+        explanation = explanation + "Your input playlist has songs that appear in {} playlists in our dataset.\n".format(len(set(self.song_searcher())))
+        explanation = explanation + "I chose to recommend songs to you from the playlists that match yours best.\n" \
+                                    "Other users that added songs like yours to their playlist also added these:\n"
+
+        return explanation

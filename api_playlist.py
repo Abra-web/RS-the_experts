@@ -93,7 +93,7 @@ class api_playlist:
                                                  "Authorization": "Bearer {}".format(self.spotify_token)})
 
         response_json = response.json()
-        print(response_json)
+        #print(response_json)
         return response_json["name"]
 
     def get_features(self, track_id):
