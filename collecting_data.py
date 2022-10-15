@@ -35,33 +35,48 @@ if __name__ == '__main__':
         # new_data = ["song_id", "list_length", "threshold", "nDCG_val", "avg_to_playlist", "list_of_values"]
         # writer.writerow(new_data)
 
-    final_line = []
+    # final_line = []
     # this method helps to skip the whole file and immediately goes to final line
-    with open('collecting_data.csv', "r") as f:
-        for line in f: pass
-        final_line = list(line.split(","))  # this is the last line of the file; also converting to list
+    # with open('collecting_data.csv', "r") as f:
+    #     for line in f: pass
+    #     final_line = list(line.split(","))  # this is the last line of the file; also converting to list
 
-    last_length = int(final_line[1])
-    last_thresh = truncate(float(final_line[2]), 3)
-    last_playlist_id = int(final_line[0])
-    last_playlist_id_index = playlist_ids.index(last_playlist_id)
+    # last_length = int(final_line[1])
+    # last_thresh = truncate(float(final_line[2]), 3)
+    # last_playlist_id = int(final_line[0])
+    # last_playlist_id_index = playlist_ids.index(last_playlist_id)
 
     # handling additional conditions
-    if last_playlist_id_index == (len(playlist_ids) - 1):
-        if last_thresh != 0.3:
-            last_thresh += truncate(last_thresh + 0.05, 3)
-            last_playlist_id_index = -1
-        else:
-            last_length += 5
-            last_thresh = 0.1
-            last_playlist_id_index = -1
+    # if last_playlist_id_index == (len(playlist_ids) - 1):
+    #     if last_thresh != 0.3:
+    #         last_thresh += truncate(last_thresh + 0.05, 3)
+    #         last_playlist_id_index = -1
+    #     else:
+    #         last_length += 5
+    #         last_thresh = 0.1
+    #         last_playlist_id_index = -1
+
+    # Add the last lenght/thresh/playlist_id it was manually. When loop finishes; re-modify
+    # ex: if last_length = 10, last_thresh = 0.20, last_playlist = 7794 (and loop of playlist_ids end)
+    # re-run with last_length = 10, last_thresh = 0.25, last_playlist = 171076 (when loop of thresh ends)
+    # re-run with last_length = 15, last_thresh = 0.1, last_playlist = 171076 (now you can leave it)
+
+    # list lengths: 5, 10, 15, 20
+    last_length = 5
+    # thresholds: 0.1, 0.15, 0.2, 0.25, 0.3
+    last_thresh = 0.1
+    last_playlist_id = 150875
+    last_playlist_id_index = playlist_ids.index(last_playlist_id)
 
     for list_length in range(last_length, 25, 5):
         for threshold in np.arange(last_thresh, 0.35, 0.05):
             # had to do this weird loop to be able to start from last playlist id
             for i in range(last_playlist_id_index + 1, len(playlist_ids)):
-                threshold = truncate(threshold, 3)
+                threshold = truncate(threshold, 3) # addition in float is not perfect
                 playlist_id = playlist_ids[i]
+                print(playlist_id)
+                print(type(playlist_id))
+                print(df_pl_id[df_pl_id['pid'] == playlist_id])
                 song_strings = df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
                 song_uris = song_strings.split(';')
 
@@ -82,9 +97,9 @@ if __name__ == '__main__':
                     writer.writerow(new_data)
 
                 # handling additional conditions (resetting index and thresh values)
-                if last_playlist_id_index == (len(playlist_ids) - 1):
-                    if last_thresh == 0.3:
-                        last_thresh = 0.1
-
-                    last_playlist_id_index = -1  # need to reset index either way
+                # if last_playlist_id_index == (len(playlist_ids) - 1):
+                #     if last_thresh == 0.3:
+                #         last_thresh = 0.1
+                #
+                #     last_playlist_id_index = -1  # need to reset index either way
 
