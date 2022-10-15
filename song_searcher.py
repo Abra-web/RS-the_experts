@@ -52,6 +52,14 @@ class song_searcher:
                 new.append((playlist_id, value))
             if len(new) == 10:
                 break
+        if len(new)<2:
+            new=[]
+            for playlist_id in counted_playlists.keys():
+                value = counted_playlists[playlist_id] / \
+                        self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['num_tracks'].item()
+                new.append((playlist_id, value))
+                if len(new) == 10:
+                    break
         return dict(new)
 
 
@@ -64,16 +72,20 @@ class song_searcher:
         # remove first item from the dict:  this is the input playlist we don't want to use
         (k := next(iter(sorted_playlist_dict)), sorted_playlist_dict.pop(k))
         best_match_playlist = []
+        best_playlists_id=[]
         loop_counter = 0
         for playlist_id in sorted_playlist_dict:
             if loop_counter == 4:
+                best_playlists_id.append(playlist_id)
                 best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
                 break
             else:
+                best_playlists_id.append(playlist_id)
                 best_match_playlist.append(
                     self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
 
             loop_counter +=1
+        self.best_playlists=best_playlists_id
         best_match_playlists_song_uris_flatlist = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, best_match_playlist) for i in b]
         #best_match_playlist_list = best_match_playlist.split(';')  # stores all the songs of the 5 best playlists
         res = sorted(set(best_match_playlists_song_uris_flatlist), key=lambda x: best_match_playlists_song_uris_flatlist.count(x),

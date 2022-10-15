@@ -41,14 +41,38 @@ if __name__ == '__main__':
     a.call_refresh()
     tracks =''
     for element in output_song_uris:
-        tracks += element+"\n"
+        tracks += a.get_name(element)+"\n"
     tracks = tracks[:-1]
 
     print1by1(rs.generate_explanation())
     print1by1('\n' +tracks+'\n \n')
+    print1by1("Would you like to see the id's of the top matched playlists, which were used to recommend you the songs? (Y/N)")
+    response=str(input())
+    if response == "Y":
+        best_playlists=rs.best_playlists
+        response="The id's of the best matched playlists are as follows:\n"
+        response+="\n".join(best_playlists)
+        quitting=False
+        reprint=True
+        while not quitting:
+            if reprint:
+                print(response)
+                print("")
+                print("Would you like to see the contents of any of these playlists?\n")
+                print("If yes, then input an Id of one of them you might want to inspect!\n")
+                print("If no, input 'N' !\n")
+            user_response=str(input())
+            if user_response == "N":
+                quitting=True
+            else:
+                if user_response in best_playlists:
+                    #printing entire playlist
+                    print("here add playlist print")
+                    reprint=True
+                else:
+                    print("Invalid id input!")
+                    reprint=False
 
-    for item in output_song_uris:
-        print(a.get_name(item))
 
     print("\n---------------------\n")
     print("snipped from input content:\n")

@@ -2,7 +2,7 @@ from os.path import dirname, abspath, join, exists
 from os import makedirs
 import pandas as pd
 from enum import Enum
-from csv_extractor import extract_rows,sort,make_songs_df,drop_columns
+from csv_extractor import extract_rows,sort,make_songs_df,drop_columns, read_csv
 import pickle
 """
 Purpose of script:
@@ -43,6 +43,7 @@ DATAFRAME_COLUMNS=PLAYLIST_COLUMNS+SONGS_COLUMNS
 class Storage:
     def __init__(self):
         self._setup()
+        self.df=read_csv(CSV_PLAYLISTS)
     def _setup(self):
         for d in [DIR_DATA,DIR_DATA_JSON,DIR_DATA_CSV,DIR_PICKLE]:
             makedirs(d, exist_ok=True)

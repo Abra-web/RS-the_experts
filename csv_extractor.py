@@ -1,9 +1,9 @@
 import sys
 import pandas as pd
-columns=["name","pid","num_albums","num_tracks","num_followers","num_edits","num_artists","artist_name","album_name","track_uri"] #"collaborative",
-columns.remove("pid")
+columns=["name","pid","num_albums","num_tracks","collaborative","num_followers","num_edits","num_artists","artist_name","album_name","track_uri"] #"collaborative",
+columns.remove("pid") #"num_tracks"
 columns.remove("track_uri")
-
+columns.remove("num_tracks")
 def extract_rows(path, number,outpath):
     try:
         data=read_csv(path)
