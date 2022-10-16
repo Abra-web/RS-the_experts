@@ -76,7 +76,7 @@ class api_playlist:
 
     def call_refresh(self):
 
-        print("Refreshing token")
+        #print("Refreshing token")
 
         refreshCaller = Refresh()
 
@@ -84,7 +84,7 @@ class api_playlist:
 
         #self.find_songs()
 
-    def get_name(self, track_id):
+    def get_song_name(self, track_id):
         valid_id = track_id[14:]
         query = "https://api.spotify.com/v1/tracks/{}".format(
             valid_id)
@@ -94,7 +94,8 @@ class api_playlist:
 
         response_json = response.json()
         #print(response_json)
-        return response_json["name"]
+        return response_json['name'], response_json['artists'][0]['name']
+
 
     def get_features(self, track_id):
         valid_id = track_id #track_id[14:]

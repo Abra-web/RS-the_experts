@@ -6,7 +6,7 @@ from pytictoc import TicToc
 from api_playlist import api_playlist
 from song_searcher import song_searcher
 from storage_handler import Storage
-import evaluation as eval
+import evaluation2 as eval
 
 if __name__ == '__main__':
     def print1by1(item):
@@ -14,6 +14,14 @@ if __name__ == '__main__':
             sys.stdout.write(c)
             sys.stdout.flush()
             time.sleep(0.01)
+        print
+
+
+    def print1by1_2(item):
+        for c in item:
+            sys.stdout.write(c)
+            sys.stdout.flush()
+            time.sleep(0.05)
         print
 
     storage = Storage()
@@ -35,22 +43,24 @@ if __name__ == '__main__':
     # execute functions from song_searcher file (commented there)
     rs = song_searcher(song_uris, df_song_uris, df_pl_id)
 
-    output_song_uris = rs.recommend_songs(output_size)
-
+    output_song_uris, song_occurrences = rs.recommend_songs(output_size)
     a = api_playlist()
     a.call_refresh()
     tracks =''
     for element in output_song_uris:
-        tracks += a.get_name(element)+"\n"
-    tracks = tracks[:-1]
+        song_name, artist_name = a.get_song_name(element)
+        tracks += str(song_occurrences[output_song_uris.index(element)]) + " times:   " + song_name + "  -  "+ artist_name + "\n"
+    #tracks = tracks[:-1]
+    t.toc()
+    print1by1_2(rs.generate_explanation())
+    print1by1_2('\n' +tracks+'\n \n')
 
-    print1by1(rs.generate_explanation())
-    print1by1('\n' +tracks+'\n \n')
+
     print1by1("Would you like to see the id's of the top matched playlists, which were used to recommend you the songs? (Y/N)")
     response=str(input())
     if response == "Y":
         best_playlists=rs.best_playlists
-        response="The id's of the best matched playlists are as follows:\n"
+        response="\n The id's of the best matched playlists are as follows:\n"
         response+="\n".join(best_playlists)
         quitting=False
         reprint=True
@@ -59,15 +69,19 @@ if __name__ == '__main__':
                 print(response)
                 print("")
                 print("Would you like to see the contents of any of these playlists?\n")
-                print("If yes, then input an Id of one of them you might want to inspect!\n")
+                print("If yes, then input an Id of one of them you might want to inspect!")
                 print("If no, input 'N' !\n")
             user_response=str(input())
             if user_response == "N":
                 quitting=True
             else:
                 if user_response in best_playlists:
+
+                    requested_uris = df_pl_id[df_pl_id['pid'] == int(user_response)]['track_uri'].item().split(';')
+                    for song_uri in requested_uris:
+                        song_name, artist_name = a.get_song_name(song_uri)
+                        print(song_name + "  -  " + artist_name)
                     #printing entire playlist
-                    print("here add playlist print")
                     reprint=True
                 else:
                     print("Invalid id input!")
@@ -75,13 +89,14 @@ if __name__ == '__main__':
 
 
     print("\n---------------------\n")
-    print("snipped from input content:\n")
-    for item in song_uris[0:6]:
-        print(a.get_name(item))
-    print("\n---------------------\n")
+    # print("snipped from input content:\n")
+    # for item in song_uris[0:6]:
+    #     print(a.get_song_name(item))
+    # print("\n---------------------\n")
+
     cal = eval.Evaluate(song_uris, output_song_uris)
+    print1by1("The accuracy of the current prediction is:")
     print(cal.give())
-    t.toc()
 
     # print output, hopefully soon connected to Spotify API to add to our playlist
     #print(output_song_uris)
