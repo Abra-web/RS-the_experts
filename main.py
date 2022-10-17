@@ -1,8 +1,6 @@
 import sys
 import time
-
 from pytictoc import TicToc
-
 from api_playlist import api_playlist
 from song_searcher import song_searcher
 from storage_handler import Storage
@@ -15,7 +13,6 @@ if __name__ == '__main__':
             sys.stdout.flush()
             time.sleep(0.01)
         print
-
 
     def print1by1_2(item):
         for c in item:
@@ -33,6 +30,7 @@ if __name__ == '__main__':
     output_size = int(input('How many songs would you like to have suggested?'))
     song_strings = df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
     song_uris = song_strings.split(';')
+    print(str(len(song_uris)))
     input_confirmation = '\n Input received! I am now creating your personalized playlist...\n'
     hearts = "  ### ###         ### ###         ### ###         ### ###  \n #########       #########       #########       ######### \n  #######         #######         #######         #######  \n   #####           #####           #####           #####   \n    ###             ###             ###             ###    \n     #               #               #               #     \n \n"
     print1by1(input_confirmation)
@@ -41,19 +39,27 @@ if __name__ == '__main__':
     t = TicToc()
     t.tic()
     # execute functions from song_searcher file (commented there)
-    rs = song_searcher(song_uris, df_song_uris, df_pl_id)
+    rs = song_searcher(song_uris, df_song_uris, df_pl_id,0.15,10)
 
     output_song_uris, song_occurrences = rs.recommend_songs(output_size)
     a = api_playlist()
     a.call_refresh()
     tracks =''
     for element in output_song_uris:
+        tracks += element+","
+    for element in song_uris:
+        tracks += element+","
+    tracks = tracks[:-1]
+
+    tracks = ''
+    for element in output_song_uris:
         song_name, artist_name = a.get_song_name(element)
-        tracks += str(song_occurrences[output_song_uris.index(element)]) + " times:   " + song_name + "  -  "+ artist_name + "\n"
-    #tracks = tracks[:-1]
+        tracks += str(
+            song_occurrences[output_song_uris.index(element)]) + " times:   " + song_name + "  -  " + artist_name + "\n"
+    # tracks = tracks[:-1]
     t.toc()
     print1by1_2(rs.generate_explanation())
-    print1by1_2('\n' +tracks+'\n \n')
+    print1by1_2('\n' + tracks + '\n \n')
 
 
     print1by1("Would you like to see the id's of the top matched playlists, which were used to recommend you the songs? (Y/N)")
@@ -87,20 +93,14 @@ if __name__ == '__main__':
                     print("Invalid id input!")
                     reprint=False
 
-
     print("\n---------------------\n")
     # print("snipped from input content:\n")
     # for item in song_uris[0:6]:
-    #     print(a.get_song_name(item))
+    #     print(a.get_name(item))
     # print("\n---------------------\n")
-
     cal = eval.Evaluate(song_uris, output_song_uris)
     print1by1("The accuracy of the current prediction is:")
     print(cal.give())
-
-    # print output, hopefully soon connected to Spotify API to add to our playlist
-    #print(output_song_uris)
+    t.toc()
     #a.add_to_playlist(tracks)
-    #print(a.get_name('spotify:track:7H6ev70Weq6DdpZyyTmUXk'))
-    #print(a.get_features('6Sy9BUbgFse0n0LPA5lwy5'))
-    # print(a.get_me())
+

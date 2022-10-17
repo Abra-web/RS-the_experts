@@ -6,10 +6,12 @@ from collections import Counter
 
 class song_searcher:
 
-    def __init__(self, input_song_uris, df_song_uri, df_playlist_id):
+    def __init__(self, input_song_uris, df_song_uri, df_playlist_id, norm_threshold, list_length):
         self.input_song_uris = input_song_uris
         self.df_song_uri = df_song_uri
         self.df_playlist_id = df_playlist_id
+        self.threshold = norm_threshold
+        self.list_length = list_length
 
     def recommend_songs(self, sample_size):
 
@@ -23,10 +25,13 @@ class song_searcher:
         playlist_id_collection = []
         songs_error = []
         for uri in self.input_song_uris:
-            try:
-                playlist_id_collection.append(self.df_song_uri.get(uri))
-            except:
-                print('{} is not in our database'.format(uri))
+            uris = self.df_song_uri.get(uri)
+            if uris is not None:
+                playlist_id_collection.append(uris)
+            else:
+                songs_error.append(uri)
+
+        # print(str(len(songs_error))+" songs were not in our database.")
 
         #  flatten the nested playlist collection list
         flat_list = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, playlist_id_collection) for i in b]
@@ -48,24 +53,24 @@ class song_searcher:
 
         for playlist_id in counted_playlists.keys():
             value = counted_playlists[playlist_id]/self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['num_tracks'].item()
-            if value > 0.3:
-                new.append((playlist_id, value))
-            if len(new) == 10:
-                break
-        if len(new)<2:
-            new=[]
-            for playlist_id in counted_playlists.keys():
-                value = counted_playlists[playlist_id] / \
-                        self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['num_tracks'].item()
-                new.append((playlist_id, value))
-                if len(new) == 10:
+            if value > self.threshold and value != 1:
+                new.append((int(playlist_id), value))
+                if len(new) > self.list_length:
                     break
+        #JANS CODE
+        # li.sort(key=lambda i: i[1], reverse=True)
+        # print(li)
+        # return dict(li)
+        #MY CODE
+        # sorting in next step
         return dict(new)
 
 
     # sample_size: number of songs u want to recommend, sorted_playlist_dict: ordered dict of key: playlist_id, value: similar songs/length of playlist
     # outputs a list with the song uris
     def song_suggester(self, counted_playlists, sample_size):
+        #JANS CODE
+        #sorted_playlist_dict = lis
         playlist_dictionary = counted_playlists
         sorted_playlist_dict = {key: val for key, val in
                                 sorted(playlist_dictionary.items(), key=lambda ele: ele[1], reverse=True)}
@@ -73,21 +78,12 @@ class song_searcher:
         (k := next(iter(sorted_playlist_dict)), sorted_playlist_dict.pop(k))
         best_match_playlist = []
         best_playlists_id=[]
-        loop_counter = 0
         for playlist_id in sorted_playlist_dict:
-            if loop_counter == 4:
-                best_playlists_id.append(playlist_id)
-                best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
-                break
-            else:
-                best_playlists_id.append(playlist_id)
-                best_match_playlist.append(
-                    self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
-
-            loop_counter +=1
+            best_playlists_id.append(playlist_id)
+            best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
         self.best_playlists=best_playlists_id
         best_match_playlists_song_uris_flatlist = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, best_match_playlist) for i in b]
-        #best_match_playlist_list = best_match_playlist.split(';')  # stores all the songs of the 5 best playlists
+          # stores all the songs of the 5 best playlists
         res = sorted(set(best_match_playlists_song_uris_flatlist), key=lambda x: best_match_playlists_song_uris_flatlist.count(x),
                      reverse=True)  # sort songs_urls based on how many times the song appears in the 5 best playlists
         res = [x for x in res if x not in self.input_song_uris]  # remove the songs from the original playlist

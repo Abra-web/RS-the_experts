@@ -47,7 +47,7 @@ class Storage:
     def _setup(self):
         for d in [DIR_DATA,DIR_DATA_JSON,DIR_DATA_CSV,DIR_PICKLE]:
             makedirs(d, exist_ok=True)
-        print('Storage set up.')
+        # print('Storage set up.')
         self._setup_csv()
     def _give_empty_df(self,columns):
         return pd.DataFrame(columns=columns)
