@@ -1,3 +1,5 @@
+import sys
+import time
 from storage_handler import Storage
 from song_searcher import song_searcher
 from pytictoc import TicToc
@@ -20,8 +22,6 @@ if __name__ == '__main__':
         playlist_URI = playlist_link.split("/")[-1].split("?")[0]
         song_strings += a.get_songs(playlist_URI)
     song_uris = song_strings.split(',')
-    #seperator = ";"
-    #seperator.join(song_uris)
     print('Playlist has length: ' + str(len(song_uris)))
     print("recommending songs and exiting main...")
     # execute functions from song_searcher file (commented there)
@@ -29,19 +29,16 @@ if __name__ == '__main__':
 
     print("found songs...")
     output_song_uris = rs.recommend_songs(5)
-
-    a = api_playlist()
-    a.call_refresh()
     tracks = ''
     for element in output_song_uris:
         tracks += element + ","
     for element in song_uris:
         tracks += element + ","
     tracks = tracks[:-1]
-    # tracks = song_uris + tracks
-    # print(tracks)
+
+    print(rs.generate_explanation())
+    for item in output_song_uris[0:6]:
+        print(a.get_name(item))
+
     t.toc()
-    # print output, hopefully soon connected to Spotify API to add to our playlist
     # a.add_to_playlist(tracks)
-    for track in output_song_uris:
-        print(a.get_name(track))

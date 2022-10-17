@@ -55,7 +55,7 @@ class song_searcher:
         for playlist_id in set(separated_list):
            value = separated_list.count(playlist_id) / self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)][
                 "num_tracks"].item()
-           if(value> self.threshold and value!=1):
+           if value> self.threshold and value!=1:
             li.append((int(playlist_id), value))
             if len(li) > self.list_length:
                 break
