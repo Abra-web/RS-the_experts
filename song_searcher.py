@@ -84,5 +84,13 @@ class song_searcher:
         songs_occurences = []
         for i in output_song_uris:
             songs_occurences.append(best_match_playlists_song_uris_flatlist.count(i))
-        print(songs_occurences)
         return output_song_uris
+
+
+    def generate_explanation(self):
+        explanation = ""
+        explanation = explanation + "Your input playlist has songs that appear in {} playlists in our dataset.\n".format(len(set(self.song_searcher())))
+        explanation = explanation + "I chose to recommend songs to you from the playlists that match yours best.\n" \
+                                    "Other users that added songs like yours to their playlist also added these:\n"
+
+        return explanation
