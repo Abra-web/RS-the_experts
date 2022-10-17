@@ -17,7 +17,7 @@ class api_playlist:
 
     def find_songs(self):
 
-        print("Finding songs in playlist...")
+        # print("Finding songs in playlist...")
         # Loop through playlist tracks, add them to list
 
         query = "https://api.spotify.com/v1/playlists/{}/tracks".format(
@@ -29,7 +29,7 @@ class api_playlist:
 
         response_json = response.json()
 
-        print(response)
+        # print(response)
 
         for i in response_json["items"]:
             self.tracks += (i["track"]["uri"] + ",")
@@ -39,7 +39,7 @@ class api_playlist:
 
     def create_playlist(self):
         # Create a new playlist
-        print("Trying to create playlist...")
+        # print("Trying to create playlist...")
         today = date.today()
 
         query = "https://api.spotify.com/v1/users/{}/playlists".format(
@@ -60,7 +60,7 @@ class api_playlist:
 
     def add_to_playlist(self, tracks):
         # add all songs to new playlist
-        print("Adding songs...")
+        # print("Adding songs...")
 
         self.new_playlist_id = self.create_playlist()
 
@@ -70,11 +70,11 @@ class api_playlist:
         response = requests.post(query, headers={"Content-Type": "application/json",
                                                  "Authorization": "Bearer {}".format(self.spotify_token)})
 
-        print(response.json)
+        # print(response.json)
 
     def call_refresh(self):
 
-        print("Refreshing token")
+        # print("Refreshing token")
 
         refreshCaller = Refresh()
 
@@ -106,7 +106,7 @@ class api_playlist:
         return response_json
 
     def get_songs(self, uri):
-        print("Finding songs in playlist...")
+        # print("Finding songs in playlist...")
         # Loop through playlist tracks, add them to list
 
         query = "https://api.spotify.com/v1/playlists/{}/tracks".format(
