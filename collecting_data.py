@@ -2,7 +2,7 @@ import csv
 import numpy as np
 
 from storage_handler import Storage
-from song_searcher import song_searcher
+from song_searcher import SongSearcher
 from pytictoc import TicToc
 from evaluate import Evaluate
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 song_uris = song_strings.split(';')
 
                 # change params here
-                rs = song_searcher(song_uris, df_song_uris, df_pl_id, threshold, list_length)
+                rs = SongSearcher(song_uris, df_song_uris, df_pl_id, threshold, list_length)
 
                 output_song_uris = rs.recommend_songs(5)
                 temp = Evaluate(song_uris,output_song_uris)

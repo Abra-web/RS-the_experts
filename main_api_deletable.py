@@ -1,7 +1,7 @@
 import sys
 import time
 from storage_handler import Storage
-from song_searcher import song_searcher
+from song_searcher import SongSearcher
 from pytictoc import TicToc
 from api_playlist import api_playlist
 
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     print('Playlist has length: ' + str(len(song_uris)))
     print("recommending songs and exiting main...")
     # execute functions from song_searcher file (commented there)
-    rs = song_searcher(song_uris, df_song_uris, df_pl_id, 0.2, 10)
+    rs = SongSearcher(song_uris, df_song_uris, df_pl_id, 0.2, 10)
 
     print("found songs...")
     output_song_uris = rs.recommend_songs(5)

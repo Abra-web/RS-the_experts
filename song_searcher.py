@@ -4,7 +4,8 @@ import pandas as pd
 
 from collections import Counter
 
-class song_searcher:
+
+class SongSearcher:
 
     def __init__(self, input_song_uris, df_song_uri, df_playlist_id, norm_threshold, list_length):
         self.input_song_uris = input_song_uris
@@ -14,7 +15,6 @@ class song_searcher:
         self.list_length = list_length
 
     def recommend_songs(self, sample_size):
-
         playlist_collection = self.song_searcher()
         sorted_playlist_dictionary = self.playlist_counter(playlist_collection)
         return self.song_suggester(sorted_playlist_dictionary, sample_size)
@@ -79,9 +79,9 @@ class song_searcher:
         best_match_playlist = []
         best_playlists_id=[]
         for playlist_id in sorted_playlist_dict:
-            best_playlists_id.append(playlist_id)
+            best_playlists_id.append(str(playlist_id))
             best_match_playlist.append(self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)]['track_uri'].item().split(';'))
-        self.best_playlists=best_playlists_id
+        self.best_playlists = best_playlists_id
         best_match_playlists_song_uris_flatlist = [i for b in map(lambda x: [x] if not isinstance(x, list) else x, best_match_playlist) for i in b]
           # stores all the songs of the 5 best playlists
         res = sorted(set(best_match_playlists_song_uris_flatlist), key=lambda x: best_match_playlists_song_uris_flatlist.count(x),

@@ -82,7 +82,7 @@ class api_playlist:
 
         #self.find_songs()
 
-    def get_song_name(self, track_id):
+    def get_name(self, track_id):
         valid_id = track_id[14:]
         query = "https://api.spotify.com/v1/tracks/{}".format(
             valid_id)
