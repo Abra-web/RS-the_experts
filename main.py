@@ -4,7 +4,7 @@ from pytictoc import TicToc
 from api_playlist import api_playlist
 from song_searcher import song_searcher
 from storage_handler import Storage
-import evaluation2 as eval
+import evaluate as eval
 
 if __name__ == '__main__':
     def print1by1(item):

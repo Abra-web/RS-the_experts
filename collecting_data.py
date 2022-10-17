@@ -4,7 +4,7 @@ import numpy as np
 from storage_handler import Storage
 from song_searcher import song_searcher
 from pytictoc import TicToc
-from Evaluate import Evaluate
+from evaluate import Evaluate
 
 # because doing addition to float numbers makes it give funny numbers
 def truncate(n, decimals=0):
@@ -84,9 +84,9 @@ if __name__ == '__main__':
                 rs = song_searcher(song_uris, df_song_uris, df_pl_id, threshold, list_length)
 
                 output_song_uris = rs.recommend_songs(5)
-                temp = Evaluate(song_uris)
+                temp = Evaluate(song_uris,output_song_uris)
                 # also saving the list of similarity values; such that if later we need new calculations
-                nDCG_val, avg_to_playlist, list_of_values = temp.calculate_nDCG(output_song_uris)
+                nDCG_val, avg_to_playlist, list_of_values = temp.calculate_nDCG()
 
                 # 1. Open a new CSV file: Structure of data is: = ['song_id', 'avg', 'nDCG_val', 'list']
                 with open('collecting_data.csv', 'a', newline='') as file:
