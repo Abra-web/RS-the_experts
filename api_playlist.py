@@ -111,7 +111,7 @@ class api_playlist:
         # Loop through playlist tracks, add them to list
 
         query = "https://api.spotify.com/v1/playlists/{}/tracks".format(
-            playlist_id)
+            uri)
 
         response = requests.get(query,
                                 headers={"Content-Type": "application/json",
