@@ -48,6 +48,7 @@ if __name__ == '__main__':
             print("Invalid Choice.")
 
     # get data for RecSys depending on choice
+    num_people = 1  # init necessary for explanation
     if choice == 0:
         playlist_id = int(input('\nWhich playlist would you like to recommend songs to? !!!!Must be lower 600.000 and not in [60.000,99.999]!!!\n'))
         song_strings = df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
@@ -93,13 +94,17 @@ if __name__ == '__main__':
         items += str(
             song_occurrences[output_song_uris.index(item)]) + " times:   " + song_name + "  -  " + artist_name + "\n"
 
-    print1by1_slow(rs.generate_explanation())
-    print1by1_slow('\n' + items + '\n \n')
+    if choice == 0 or (choice == 1 and num_people == 1):
+        print1by1_slow(rs.generate_explanation())
+        print1by1_slow('\n' + items + '\n \n')
+    elif choice == 1 and num_people > 1:
+        print1by1_slow(rs.generate_group_explanation())
+        print1by1_slow('\n' + items + '\n \n')
 
     # evaluation
     cal = eval.Evaluate(song_uris, output_song_uris)
-    print1by1("The accuracy of the current prediction is:\n")
-    print(cal.give()+'\n')
+    print1by1("The accuracy of the current prediction based on song feaatures is:\n")
+    print(cal.give())
 
 
     print1by1("Would you like to investigate the content of the top matched playlists, which were used to recommend you the songs? (Y/N)")
@@ -139,7 +144,7 @@ if __name__ == '__main__':
     if choice == 1:
         add = input("Would you like to add the suggested songs to a playlist? (Y/N)")
         if add == 'Y':
-            a.add_to_playlist(tracks)
+            # a.add_to_playlist(tracks)
             print("Successfully added to playlist!")
         else:
             print("Thank you for using our recommender system. Have a nice day!")
