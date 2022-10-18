@@ -48,20 +48,23 @@ if __name__ == '__main__':
             print("Invalid Choice.")
 
     # get data for RecSys depending on choice
-    num_people = 1  # init necessary for explanation
+    # init necessary for explanation
+    num_people = int(input("How many playlist do u want to give?"))
+    song_strings = ''
     if choice == 0:
-        playlist_id = int(input('\nWhich playlist would you like to recommend songs to? !!!!Must be lower 600.000 and not in [60.000,99.999]!!!\n'))
-        song_strings = df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
+        song_uris = []
+        for i in range(num_people):
+            playlist_id = int(input('\nWhich playlist would you like to recommend songs to? !!!!Must be lower 600.000 and not in [60.000,99.999]!!!\n'))
+            song_strings += df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
+            temp_song_uris = song_strings.split(';')
+            print("\n---------------------")
+            print("snipped from input content:\n")
+            for item in temp_song_uris[-5:]:
+                song_name, artist_name = a.get_name(item)
+                print(song_name + " - " + artist_name)
+            print("---------------------\n")
         song_uris = song_strings.split(';')
-        print("\n---------------------")
-        print("snipped from input content:\n")
-        for item in song_uris[0:6]:
-            song_name, artist_name = a.get_name(item)
-            print(song_name + " - " + artist_name)
-        print("---------------------\n")
     else:
-        num_people = int(input("How many playlist do u want to give?"))
-        song_strings = ''
         for i in range(num_people):
             playlist_link = input('Which playlist would you like to recommend songs to? Give the playlist link')
             playlist_URI = playlist_link.split("/")[-1].split("?")[0]
@@ -80,7 +83,7 @@ if __name__ == '__main__':
     rs = SongSearcher(song_uris, df_song_uris, df_pl_id, 0.15, 10)
     output_song_uris, song_occurrences = rs.recommend_songs(output_size)
 
-
+    #prep output
     tracks = ''
     for element in output_song_uris:
         tracks += element + ","
@@ -94,25 +97,26 @@ if __name__ == '__main__':
         items += str(
             song_occurrences[output_song_uris.index(item)]) + " times:   " + song_name + "  -  " + artist_name + "\n"
 
-    if choice == 0 or (choice == 1 and num_people == 1):
+    # explanations
+    if num_people == 1:
         print1by1_slow(rs.generate_explanation())
         print1by1_slow('\n' + items + '\n \n')
-    elif choice == 1 and num_people > 1:
+    elif num_people > 1:
         print1by1_slow(rs.generate_group_explanation())
         print1by1_slow('\n' + items + '\n \n')
 
     # evaluation
     cal = eval.Evaluate(song_uris, output_song_uris)
-    print1by1("The accuracy of the current prediction based on song feaatures is:\n")
+    print1by1("The accuracy of the current prediction based on song features is:\n")
     print(cal.give())
 
-
+    # further explanations
     print1by1("Would you like to investigate the content of the top matched playlists, which were used to recommend you the songs? (Y/N)")
     response = str(input())
     if response == "Y":
         best_playlists = rs.best_playlists
         response = "\nThe id's of the best matched playlists are as follows:\n"
-        response += "\n".join(best_playlists)
+        response += ",  ".join(best_playlists)
         quitting = False
         reprint = True
         while not quitting:
@@ -148,5 +152,3 @@ if __name__ == '__main__':
             print("Successfully added to playlist!")
         else:
             print("Thank you for using our recommender system. Have a nice day!")
-
-

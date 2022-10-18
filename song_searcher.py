@@ -96,7 +96,8 @@ class SongSearcher:
 
     def generate_explanation(self):
         explanation = ""
-        explanation = explanation + "Your input playlist has songs that appear in {} playlists in our dataset.\n".format(len(set(self.song_searcher())))
+        explanation = explanation + "Your input playlist has songs that appear in {} playlists in " \
+                                    "our dataset.\n".format(len(set(self.song_searcher())))
         explanation = explanation + "I chose to recommend songs to you from the playlists that match yours best.\n" \
                                     "Among your 5 best matches users that added songs like yours to their playlist also added these:\n"
 
@@ -104,8 +105,10 @@ class SongSearcher:
 
     def generate_group_explanation(self):
         explanation = ""
-        explanation = explanation + "Your input playlists have songs that appear in {} playlists in our dataset.\n".format(len(set(self.song_searcher())))
-        explanation = explanation + "I joined your playlists and recommended songs to you from playlists that match your playlist combination best.\n" \
-                                    "Among the 5 best matches of the combined playlist, people who added songs like all of yours to their playlist also added these:\n"
-
+        explanation = explanation + "Your input playlists have songs that appear in {} playlists in our " \
+                                    "dataset.\n".format(len(set(self.song_searcher())))
+        explanation = explanation + "I joined your playlists and recommended songs to you from playlists " \
+                                    "that match your playlist combination best.\n" \
+                                    "Among the 5 best matches of the combined playlist, " \
+                                    "people who added songs like yours to their playlist also added these:\n"
         return explanation
