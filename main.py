@@ -148,7 +148,7 @@ if __name__ == '__main__':
     if choice == 1:
         add = input("Would you like to add the suggested songs to a playlist? (Y/N)")
         if add == 'Y':
-            # a.add_to_playlist(tracks)
+            a.add_to_playlist(tracks)
             print("Successfully added to playlist!")
         else:
             print("Thank you for using our recommender system. Have a nice day!")

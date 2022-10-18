@@ -46,7 +46,7 @@ class api_playlist:
             spotify_user_id)
 
         request_body = json.dumps({
-            "name": "test", "description": "Test", "public": True
+            "name": "New playlist", "description": "Playlist with the recommended songs", "public": True
         })
 
         response = requests.post(query, data=request_body, headers={
