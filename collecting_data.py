@@ -80,13 +80,13 @@ if __name__ == '__main__':
                     song_strings = df_pl_id[df_pl_id['pid'] == playlist_id]["track_uri"].item()
                     song_uris = song_strings.split(';')
 
-                # change params here
-                rs = SongSearcher(song_uris, df_song_uris, df_pl_id, threshold, list_length)
+                    # change params here
+                    rs = SongSearcher(song_uris, df_song_uris, df_pl_id, threshold, list_length)
 
-                output_song_uris = rs.recommend_songs(5)
-                temp = Evaluate(song_uris,output_song_uris)
-                # also saving the list of similarity values; such that if later we need new calculations
-                nDCG_val, avg_to_playlist, list_of_values = temp.calculate_nDCG()
+                    output_song_uris = rs.recommend_songs(5)
+                    temp = Evaluate(song_uris,output_song_uris)
+                    # also saving the list of similarity values; such that if later we need new calculations
+                    nDCG_val, avg_to_playlist, list_of_values = temp.calculate_nDCG()
 
                     # 1. Open a new CSV file: Structure of data is: = ['song_id', 'avg', 'nDCG_val', 'list']
                     with open('collecting_data.csv', 'a', newline='') as file:
