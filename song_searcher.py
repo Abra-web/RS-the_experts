@@ -55,7 +55,7 @@ class song_searcher:
         for playlist_id in set(separated_list):
            value = separated_list.count(playlist_id) / self.df_playlist_id[self.df_playlist_id['pid'] == int(playlist_id)][
                 "num_tracks"].item()
-           if(value> self.threshold and value!=1):
+           if value> self.threshold and value!=1:
             li.append((int(playlist_id), value))
             if len(li) > self.list_length:
                 break
@@ -84,5 +84,13 @@ class song_searcher:
         songs_occurences = []
         for i in output_song_uris:
             songs_occurences.append(best_match_playlists_song_uris_flatlist.count(i))
-        print(songs_occurences)
         return output_song_uris
+
+
+    def generate_explanation(self):
+        explanation = ""
+        explanation = explanation + "Your input playlist has songs that appear in {} playlists in our dataset.\n".format(len(set(self.song_searcher())))
+        explanation = explanation + "I chose to recommend songs to you from the playlists that match yours best.\n" \
+                                    "Other users that added songs like yours to their playlist also added these:\n"
+
+        return explanation
