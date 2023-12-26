@@ -3,7 +3,7 @@ import spotipy
 from spotipy import SpotifyClientCredentials
 
 if __name__ == '__main__':
-    client_credentials_manager = SpotifyClientCredentials(client_id='61411c9b9d0d416c984da1fb3515ffd4', client_secret='707610ca81b94e6cb4e1b4f3c093f78b')
+    client_credentials_manager = SpotifyClientCredentials(client_id='', client_secret='')
     sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
     playlist_link = "https://open.spotify.com/playlist/7tRfOpEVloAasjdGg6yVOy?si=svCB_QjJR_a_62MW0b7Kzg"
     playlist_URI = playlist_link.split("/")[-1].split("?")[0]
