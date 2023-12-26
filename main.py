@@ -1,10 +1,11 @@
 import sys
 import time
-from pytictoc import TicToc
-from api_playlist import api_playlist
 from song_searcher import SongSearcher
+from api.api_playlist import api_playlist  # updated import statement
 from storage_handler import Storage
 import evaluate as eval
+
+# rest of your code
 
 if __name__ == '__main__':
     def print1by1(item):
@@ -27,9 +28,7 @@ if __name__ == '__main__':
     df_pl_id = storage.give_playlist()
     print("Loading songs...")
     df_song_uris = storage.give_songs()
-    print("Creating api connection...")
-    a = api_playlist()
-    a.call_refresh()
+    
 
     # work with API or DATAset?
     choice = None
@@ -43,7 +42,9 @@ if __name__ == '__main__':
         elif choice == 'api':
             choice = 1
             counter += 1
-            print("Thank you for choosing API.")
+            print("Creating api connection...")
+            a = api_playlist()
+            a.call_refresh()
         else:
             print("Invalid Choice.")
 
@@ -107,8 +108,8 @@ if __name__ == '__main__':
 
     # evaluation
     cal = eval.Evaluate(song_uris, output_song_uris)
-    print1by1("The accuracy of the current prediction based on song features is:\n")
-    print(cal.give())
+    #print1by1("The accuracy of the current prediction based on song features is:\n")
+    #print(cal.give())
 
     # further explanations
     print1by1("Would you like to investigate the content of the top matched playlists, which were used to recommend you the songs? (Y/N)")

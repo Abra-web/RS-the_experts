@@ -1,4 +1,4 @@
-from secret_holder import refresh_token, base_64
+from api.secret_holder import refresh_token, base_64
 import requests
 import json
 

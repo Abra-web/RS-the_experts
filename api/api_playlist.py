@@ -1,8 +1,7 @@
 import json
 from datetime import date
 
-import secret_holder
-from secret_holder import spotify_user_id, playlist_id
+from api.secret_holder import spotify_user_id, playlist_id
 import requests
 from refresh import Refresh
 
