@@ -69,7 +69,7 @@ class Evaluate:
         ideal_values = list(new_ideal_rank.values())
         # not sure if this is right, but I think changing the final values into integers sorted by increasing vals
         # makes us give more legit result
-        recommended_values = self.replace_val(list(new_recommended_rank.values()))
+        recommended_values = self.swap_val(self.replace_val(list(new_recommended_rank.values())))
 
         nDCG = ndcg_score(np.asarray([self.replace_val(ideal_values)]), np.asarray([recommended_values]))
         compared_to_playlist = sum(list(new_recommended_rank.values())) / len(new_recommended_rank)
